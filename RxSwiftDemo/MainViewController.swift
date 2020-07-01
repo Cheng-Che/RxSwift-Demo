@@ -22,7 +22,6 @@ class MainViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     private var indicatorView: UIActivityIndicatorView!
-    private var model = BehaviorRelay<[PhotoModel]>(value: [])
     private var viewModel = MainViewModel()
     private let disposeBag = DisposeBag()
     private var status: PageStatus = .firstLoading
@@ -87,6 +86,9 @@ class MainViewController: UIViewController {
         tableView.rx.itemSelected.subscribe(onNext: { [weak self] indexPath in
             self?.tableView.deselectRow(at: indexPath, animated: true)
             let vc = DetailMainTableViewController(nibName: "DetailMainTableViewController", bundle: .main)
+            if let model = self?.viewModel.model.value[indexPath.row] {
+                vc.passViewModel(model: model)
+            }
             self?.navigationController?.pushViewController(vc, animated: true)
         }).disposed(by: disposeBag)
         
